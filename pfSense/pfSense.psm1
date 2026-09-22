@@ -237,6 +237,9 @@ Function Add-pfSenseUser {
         [ValidateSet('sha1', 'sha224', 'sha256', 'sha384', 'sha512')]
         [String] $DigestAlgorithm = 'sha256',
 
+        [ValidateSet('RSA', 'ECDSA')]
+        [String] $KeyType = 'RSA',
+
         [Switch] $Quiet # No output upon completion
     )
 
@@ -285,12 +288,13 @@ Function Add-pfSenseUser {
         } # Change the utype to 'system' to create a protected system user
 
         $dictCertData = @{ # Extra form fields when requesting a certificate for the user
-            showcert    = 'yes'
-            name        = "$($UserName)_cert"
-            caref       = $CA
-            keylen      = $KeyLength
-            digest_alg  = $DigestAlgorithm
-            lifetime    = $LifeTime
+            createcert = 'yes'
+            name       = "$($UserName)_cert"
+            caref      = $CA
+            keylen     = $KeyLength
+            digest_alg = $DigestAlgorithm
+            lifetime   = $LifeTime
+            keytype    = $KeyType
         }
 
         If ($Certificate) { # Should we request a cert from the CA?
